@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallsManager: MonoBehaviour
+public class BallsManager : MonoBehaviour
 {
     bool isAttached = false;
     bool canClamp = false;
@@ -56,6 +56,13 @@ public class BallsManager: MonoBehaviour
         isAttached = false;
     }
 
+    //If the user presses Space when they are not ready to attach somewhere
+    void DetachCompletely()
+    {
+        freezedBall.constraints = RigidbodyConstraints2D.None;
+        isAttached = false;
+    }
+
     void SwapOpportunities()
     {
         Rigidbody2D exchanger = freezedBall;
@@ -79,31 +86,24 @@ public class BallsManager: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isAttached == false && canClamp)
-                StartAttachment();
-            else if (isAttached == true && canClamp)
+            if (canClamp)
             {
-                StopAttachment();
-                StartAttachment();
+                if (isAttached == false)
+                    StartAttachment();
+                else
+                {
+                    StopAttachment();
+                    StartAttachment();
+                }
             }
+            else
+            {
+                DetachCompletely();
+            }
+            
         }
-
-        /*Vector2 frozen = freezedBall.transform.position;
-        Vector2 swinging = swingingBall.transform.position;
-
-        //Frozen angle
-        frozen.x = frozen.x - swinging.x;
-        frozen.y = frozen.y - swinging.y;
-        float frozenAngle = Mathf.Atan2(frozen.y, frozen.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, frozenAngle));
-
-        //Swinging angle
-        swinging.x = swinging.x - frozen.x;
-        swinging.y = swinging.y - frozen.y;
-        float swingingAngle = Mathf.Atan2(swinging.y, swinging.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, swingingAngle));*/
 
         Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
 
