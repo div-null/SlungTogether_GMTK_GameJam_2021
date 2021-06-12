@@ -52,7 +52,9 @@ public class BallsControls : MonoBehaviour
         Rigidbody2D exchanger = freezedBall;
         freezedBall = swingingBall;
         freezedBall.tag = "FreezedBall";
+        freezedBall.mass = 0.1f;
         swingingBall = exchanger;
+        swingingBall.mass = 1f;
         swingingBall.tag = "SwingingBall";
     }
 
