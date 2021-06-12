@@ -5,6 +5,7 @@ using UnityEngine;
 public class ClampZone : MonoBehaviour
 {
     Collider2D Collider2D;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -18,9 +19,27 @@ public class ClampZone : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        //TODO
-        //player
+        print("tag: " + other.tag);
+        if (other.tag == "Player")
+        {
+            ToggleCanClamp(other.GetComponent<BallPhysics>(), true);
+        }
+    }
+
+    private void ToggleCanClamp(BallPhysics ball, bool canClamp)
+    {
+        ball.CanClamp(canClamp);
+    }
+
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "Player")
+        {
+            ToggleCanClamp(other.GetComponent<BallPhysics>(), false);
+        }
     }
 }
