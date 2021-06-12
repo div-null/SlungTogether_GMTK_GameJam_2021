@@ -22,7 +22,7 @@ public class ClampZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "FreezedBall" || other.tag == "SwingingBall")
+        if (other.tag == "SwingingBall")
         {
             ToggleCanClamp(true);
             gameObject.GetComponent<SpriteRenderer>().color = Color.green;
@@ -36,7 +36,7 @@ public class ClampZone : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "FreezedBall" || collision.tag == "SwingingBall")
+        if (collision.tag == "SwingingBall")
         {
             ToggleCanClamp(true);
             gameObject.GetComponent<SpriteRenderer>().color = Color.green;
@@ -45,7 +45,7 @@ public class ClampZone : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "FreezedBall" || other.tag == "SwingingBall")
+        if (other.tag == "SwingingBall")
         {
             ToggleCanClamp(false);
             gameObject.GetComponent<SpriteRenderer>().color = Color.white;
