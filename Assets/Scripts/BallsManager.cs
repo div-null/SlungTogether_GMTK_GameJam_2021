@@ -15,6 +15,15 @@ public class BallsManager: MonoBehaviour
     public Rigidbody2D ball1;
     public Rigidbody2D ball2;
 
+    public float maxVelocity;
+    public float maxForce;
+    public float force;
+    public float minDistance;
+    public float maxDistance;
+
+    private float currentVelocity;
+    private float currentForce;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +42,7 @@ public class BallsManager: MonoBehaviour
         freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
         freezedJoint.enabled = false;
 
-        freezedBall.constraints = RigidbodyConstraints2D.FreezeAll;
+        freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
 
         isAttached = true;
     }
@@ -41,7 +50,7 @@ public class BallsManager: MonoBehaviour
     void StopAttachment()
     {
         freezedBall.constraints = RigidbodyConstraints2D.None;
-        freezedBall.constraints = RigidbodyConstraints2D.FreezeRotation;
+        //freezedBall.constraints = RigidbodyConstraints2D.FreezeRotation;
         SwapOpportunities();
 
         isAttached = false;
@@ -64,7 +73,7 @@ public class BallsManager: MonoBehaviour
 
     public Vector3 GetBallsCenter()
     {
-        return Vector3.zero;
+        return freezedBall.position;
     }
 
     // Update is called once per frame
@@ -81,14 +90,52 @@ public class BallsManager: MonoBehaviour
             }
         }
 
+        /*Vector2 frozen = freezedBall.transform.position;
+        Vector2 swinging = swingingBall.transform.position;
+
+        //Frozen angle
+        frozen.x = frozen.x - swinging.x;
+        frozen.y = frozen.y - swinging.y;
+        float frozenAngle = Mathf.Atan2(frozen.y, frozen.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, frozenAngle));
+
+        //Swinging angle
+        swinging.x = swinging.x - frozen.x;
+        swinging.y = swinging.y - frozen.y;
+        float swingingAngle = Mathf.Atan2(swinging.y, swinging.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, swingingAngle));*/
+
+        Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
+
         if (isAttached == true)
         {
             if ((swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
             {
-                swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * 3f, 0), ForceMode2D.Force);
+                //swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * force, 0), ForceMode2D.Force);
+                swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+                if (swingingBall.velocity.magnitude > currentVelocity)
+                    swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
+            
+            swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
+            swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
+            swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
 
-            swingingJoint.distance -= Input.GetAxis("Vertical") / 100;
+            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            
+
+            //Debug.Log(swingingJoint.distance);
+            Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
         }
     }
+
+    /*private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "")
+        {
+            //ToggleCanClamp(true);
+            //gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+        }
+    }*/
 }
