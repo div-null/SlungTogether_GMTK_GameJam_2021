@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    BallsManager ballsManager;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        ballsManager = FindObjectOfType<BallsManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Camera.main.transform.position = FindObjectOfType<BallsControls>().GetPositionOfFreezeBall() - new Vector3(0, 0, 1);
+
     }
 }

@@ -8,7 +8,7 @@ public class DeathZone : MonoBehaviour
     {
         if (collision.gameObject.tag == "FreezeBall" || collision.gameObject.tag == "SwingingBall")
         {
-            Debug.Log("GAMEOVER");
+            LevelManager.GameOver();
         }
     }
 

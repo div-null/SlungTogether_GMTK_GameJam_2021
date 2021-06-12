@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallsControls : MonoBehaviour
+public class BallsManager: MonoBehaviour
 {
     bool isAttached = false;
     bool canClamp = false;
 
     Rigidbody2D swingingBall;
     Rigidbody2D freezedBall;
-    DistanceJoint2D swingingJoint;
-    DistanceJoint2D freezedJoint;
+    SpringJoint2D swingingJoint;
+    SpringJoint2D freezedJoint;
 
     public Rigidbody2D ball1;
     public Rigidbody2D ball2;
@@ -27,10 +27,10 @@ public class BallsControls : MonoBehaviour
 
     void StartAttachment()
     {
-        swingingJoint = swingingBall.GetComponent<DistanceJoint2D>();
+        swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
         swingingJoint.enabled = true;
 
-        freezedJoint = freezedBall.GetComponent<DistanceJoint2D>();
+        freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
         freezedJoint.enabled = false;
 
         freezedBall.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -52,21 +52,19 @@ public class BallsControls : MonoBehaviour
         Rigidbody2D exchanger = freezedBall;
         freezedBall = swingingBall;
         freezedBall.tag = "FreezedBall";
-        freezedBall.mass = 0.1f;
         swingingBall = exchanger;
-        swingingBall.mass = 1f;
         swingingBall.tag = "SwingingBall";
-    }
-
-    //for camera (test)
-    public Vector3 GetPositionOfFreezeBall()
-    {
-        return freezedBall.position;
+        swingingBall.AddForce((freezedBall.position - swingingBall.position).normalized * 20);
     }
 
     public void CanClamp(bool _canClamp)
     {
         canClamp = _canClamp;
+    }
+
+    public Vector3 GetBallsCenter()
+    {
+        return Vector3.zero;
     }
 
     // Update is called once per frame
@@ -76,16 +74,21 @@ public class BallsControls : MonoBehaviour
         {
             if (isAttached == false && canClamp)
                 StartAttachment();
-            else if (isAttached == true)
+            else if (isAttached == true && canClamp)
+            {
                 StopAttachment();
+                StartAttachment();
+            }
         }
 
         if (isAttached == true)
         {
-            if ((swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.1f)
+            if ((swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
             {
-                swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal"), 0), ForceMode2D.Force);
+                swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * 3f, 0), ForceMode2D.Force);
             }
+
+            swingingJoint.distance -= Input.GetAxis("Vertical") / 100;
         }
     }
 }
