@@ -110,9 +110,10 @@ public class BallsManager : MonoBehaviour
         if (isAttached == true)
         {
             float dist = (swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude;
-            print("dist: " + dist + ", swingJoint dist: " + (swingingJoint.distance - 0.4f));
+            //print("dist: " + dist + ", swingJoint dist: " + (swingingJoint.distance - 0.4f));
             currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
             currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            print("currentForce: " + currentForce);
             if (dist > swingingJoint.distance - 0.4f) //why is this here?
             {
                 //swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
