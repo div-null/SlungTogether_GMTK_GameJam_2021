@@ -22,24 +22,23 @@ public class ClampZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("tag: " + other.tag);
-        if (other.tag == "Player")
+        if (other.tag == "FreezedBall")
         {
-            ToggleCanClamp(other.GetComponent<BallPhysics>(), true);
+            ToggleCanClamp(true);
         }
     }
 
-    private void ToggleCanClamp(BallPhysics ball, bool canClamp)
+    private void ToggleCanClamp(bool canClamp)
     {
-        ball.CanClamp(canClamp);
+        FindObjectOfType<BallsControls>().CanClamp(canClamp);
     }
 
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "FreezedBall")
         {
-            ToggleCanClamp(other.GetComponent<BallPhysics>(), false);
+            ToggleCanClamp(false);
         }
     }
 }
