@@ -109,24 +109,30 @@ public class BallsManager : MonoBehaviour
 
         if (isAttached == true)
         {
-            if ((swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
+            float dist = (swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude;
+            print("dist: " + dist + ", swingJoint dist: " + (swingingJoint.distance - 0.4f));
+            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            if (dist > swingingJoint.distance - 0.4f) //why is this here?
             {
-                //swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * force, 0), ForceMode2D.Force);
-                swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+                //swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+                swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * currentForce), ForceMode2D.Force);
                 if (swingingBall.velocity.magnitude > currentVelocity)
                     swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
+            else
+                print("Goofy stuff is happening");
             
             swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
 
-            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
-            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            /*currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);*/
             
 
             //Debug.Log(swingingJoint.distance);
-            Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
+            //Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
         }
     }
 
