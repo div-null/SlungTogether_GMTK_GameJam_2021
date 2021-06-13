@@ -20,9 +20,7 @@ public class Goal : MonoBehaviour
     {
         if (col.tag == "SwingingBall")
         {
-            //Win level screen
-            //Load next level
-            print("Level completed!");
+            LevelManager.Win();
         }
     }
 }
