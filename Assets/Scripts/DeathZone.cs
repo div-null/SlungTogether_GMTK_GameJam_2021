@@ -6,7 +6,7 @@ public class DeathZone : MonoBehaviour
 {
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "FreezeBall" || collision.gameObject.tag == "SwingingBall")
+        if (collision.gameObject.tag == "FreezedBall" || collision.gameObject.tag == "SwingingBall")
         {
             LevelManager.GameOver();
         }

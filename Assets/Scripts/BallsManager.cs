@@ -5,6 +5,7 @@ using UnityEngine;
 public class BallsManager : MonoBehaviour
 {
     bool isAttached = false;
+    bool loose = false;
     bool canClamp = false;
 
     Rigidbody2D swingingBall;
@@ -34,43 +35,56 @@ public class BallsManager : MonoBehaviour
         StartAttachment();
     }
 
-    void StartAttachment()
+    public void StartAttachment()
     {
-        swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
-        swingingJoint.enabled = true;
+        if (loose)
+        {
+            loose = false;
 
-        freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
-        freezedJoint.enabled = false;
+        }
+        else
+        {
+            swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
+            swingingJoint.enabled = true;
 
-        freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
+            freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
+            freezedJoint.enabled = false;
 
-        isAttached = true;
+            freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
+
+            isAttached = true;
+            
+        }
+        
     }
 
     void StopAttachment()
     {
         freezedBall.constraints = RigidbodyConstraints2D.None;
-        //freezedBall.constraints = RigidbodyConstraints2D.FreezeRotation;
         SwapOpportunities();
 
         isAttached = false;
+        loose = false;
     }
 
     //If the user presses Space when they are not ready to attach somewhere
     void DetachCompletely()
     {
+        print("flying free!!!!");
         freezedBall.constraints = RigidbodyConstraints2D.None;
         isAttached = false;
+        loose = true;
+
     }
 
-    void SwapOpportunities()
+    public void SwapOpportunities()
     {
         Rigidbody2D exchanger = freezedBall;
         freezedBall = swingingBall;
         freezedBall.tag = "FreezedBall";
         swingingBall = exchanger;
         swingingBall.tag = "SwingingBall";
-        swingingBall.AddForce((freezedBall.position - swingingBall.position).normalized * 20);
+        swingingBall.AddForce((freezedBall.position - swingingBall.position).normalized * 20); //not sure this line is necessary
     }
 
     public void CanClamp(bool _canClamp)
@@ -84,10 +98,14 @@ public class BallsManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (loose)
+            {
+                SwapOpportunities();
+            }
             if (canClamp)
             {
                 if (isAttached == false)
@@ -110,10 +128,8 @@ public class BallsManager : MonoBehaviour
         if (isAttached == true)
         {
             float dist = (swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude;
-            //print("dist: " + dist + ", swingJoint dist: " + (swingingJoint.distance - 0.4f));
             currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
             currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
-            print("currentForce: " + currentForce);
             if (dist > swingingJoint.distance - 0.4f) //why is this here?
             {
                 //swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
@@ -122,27 +138,18 @@ public class BallsManager : MonoBehaviour
                     swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
             else
-                print("Goofy stuff is happening");
+            {
+
+            }
             
             swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
-
-            /*currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
-            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);*/
-            
-
-            //Debug.Log(swingingJoint.distance);
-            //Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
         }
     }
 
-    /*private void OnTriggerStay2D(Collider2D collision)
+    public bool IsLoose()
     {
-        if (collision.tag == "")
-        {
-            //ToggleCanClamp(true);
-            //gameObject.GetComponent<SpriteRenderer>().color = Color.green;
-        }
-    }*/
+        return loose;
+    }
 }
