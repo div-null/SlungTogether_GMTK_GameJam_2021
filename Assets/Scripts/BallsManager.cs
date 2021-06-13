@@ -1,9 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Spine;
+using Spine.Unity;
 
 public class BallsManager : MonoBehaviour
 {
+    public enum swingingAnimationState
+    {
+        hang = 0,
+        ReachLeft,
+        ReachRight
+    }
+
+    public enum scribbleAnimationState
+    {
+        none = 0,
+        up,
+        down
+    }
+
     bool isAttached = false;
     bool loose = false;
     bool canClamp = false;
@@ -26,6 +42,15 @@ public class BallsManager : MonoBehaviour
     private float currentVelocity;
     private float currentForce;
 
+    //Animation
+    private swingingAnimationState swingingState;
+    private scribbleAnimationState scribbleState;
+
+    SkeletonAnimation freezeSpiderSkeleton;
+    SkeletonAnimation swingingSpiderSkeleton;
+
+    Vector3 previousSpringDirection;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,10 +59,12 @@ public class BallsManager : MonoBehaviour
         freezedBall = ball2;
         freezedBall.tag = "FreezedBall";
         StartAttachment();
+        previousSpringDirection = (swingingBall.position - freezedBall.position).normalized;
     }
 
     public void StartAttachment()
     {
+        //idk what is this - Ivan
         if (loose)
         {
             loose = false;
@@ -54,9 +81,17 @@ public class BallsManager : MonoBehaviour
             freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
 
             isAttached = true;
-            
+
+
+            //Animations
+            freezeSpiderSkeleton = freezedBall.GetComponentInChildren<SkeletonAnimation>();
+            swingingSpiderSkeleton = swingingBall.GetComponentInChildren<SkeletonAnimation>();
+            //Spider attaches to the object
+            freezeSpiderSkeleton.AnimationState.SetAnimation(0, "Landing", false);
+            freezeSpiderSkeleton.AnimationState.AddAnimation(0, "Idle", true, 0);
+            swingingBall.GetComponentInChildren<SkeletonAnimation>().AnimationState.SetAnimation(0, "Hang", true);
         }
-        
+
     }
 
     void StopAttachment()
@@ -127,38 +162,39 @@ public class BallsManager : MonoBehaviour
         swinging.y = swinging.y - frozen.y;
         float swingingAngle = Mathf.Atan2(swinging.y, swinging.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, swingingAngle));*/
-        /*
-    Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
+    /*
+Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
 
-        if (isAttached == true)
+    if (isAttached == true)
+    {
+        if ((swingingJoint.connectedAnchor - (Vector2) swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
         {
-            if ((swingingJoint.connectedAnchor - (Vector2) swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
-            {
-                //swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * force, 0), ForceMode2D.Force);
-                swingingBall.AddForce(forceDirection* (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
-                if (swingingBall.velocity.magnitude > currentVelocity)
-                    swingingBall.velocity = swingingBall.velocity.normalized* currentVelocity;
+            //swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * force, 0), ForceMode2D.Force);
+            swingingBall.AddForce(forceDirection* (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+            if (swingingBall.velocity.magnitude > currentVelocity)
+                swingingBall.velocity = swingingBall.velocity.normalized* currentVelocity;
 }
 
 swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
-            swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
-            swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
+        swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
+        swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
 
-            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
-            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
-            
+        currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+        currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
 
-            //Debug.Log(swingingJoint.distance);
-            Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
-        }
+
+        //Debug.Log(swingingJoint.distance);
+        Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
     }
-     */
+}
+ */
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            /*
             if (loose)
             {
                 SwapOpportunities();
@@ -172,7 +208,7 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
                     StopAttachment();
                 }
             }
-
+            */
             //if they are falling down because they detach and freezeBall can attach then StartAttachment
             if (isAttached == false && canClamp == true)
             {
@@ -205,19 +241,69 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
         if (isAttached == true)
         {
             float dist = (swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude;
-            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
-            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            var currentSpringDirection = (swingingBall.position - freezedBall.position).normalized;
+            
+            var rotation = Vector2.SignedAngle(previousSpringDirection, currentSpringDirection);
+
+            //var lookAt = Quaternion.LookRotation(currentSpringDirection, Vector3.up); //new Quaternion();
+            //Debug.Log(currentSpringDirection);
+           
+            //lookAt.SetLookRotation(currentSpringDirection, swingingSpiderSkeleton.transform);
+            //swingingSpiderSkeleton.transform.rotation = Quaternion.EulerAngles(0, 0, lookAt.ToEulerAngles().z);//new Quaternion(0, 0, lookAt.ToEulerAngles().z, 0);
+
+            currentVelocity = maxVelocity * swingingJoint.distance / (maxDistance - minDistance);
+            currentForce = maxForce * swingingJoint.distance / (maxDistance - minDistance);
+
+            if (Mathf.Abs(rotation) > 8.0f)
+            {
+                swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
+            }
             if (dist > swingingJoint.distance - 0.4f) //why is this here?
             {
                 //swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
                 swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * currentForce), ForceMode2D.Force);
-                if (swingingBall.velocity.magnitude > currentVelocity)
-                    swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
-            
+
             swingingJoint.distance -= Input.GetAxis("Vertical") / 100 * changingDistanceSpeed;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        var currentSpringDirection = (swingingBall.position - freezedBall.position).normalized;
+        var rotation = Vector2.SignedAngle(previousSpringDirection, currentSpringDirection);
+        previousSpringDirection = currentSpringDirection;
+
+        //Animations
+        if (Input.GetAxis("Vertical") < 0 && scribbleState != scribbleAnimationState.down)
+        {
+            swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbDown", true);
+            scribbleState = scribbleAnimationState.down;
+        }
+        else if (Input.GetAxis("Vertical") > 0 && scribbleState != scribbleAnimationState.up)
+        {
+            swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbUp", true);
+            scribbleState = scribbleAnimationState.up;
+        }
+        else if (Input.GetAxis("Vertical") == 0)
+        {
+            if (rotation > 0 && swingingState != swingingAnimationState.ReachRight)
+            {
+                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachRight", true);
+                swingingState = swingingAnimationState.ReachRight;
+            }
+            else if (rotation < 0 && swingingState != swingingAnimationState.ReachLeft)
+            {
+                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachLeft", true);
+                swingingState = swingingAnimationState.ReachLeft;
+            }
+            else
+            {
+                    swingingSpiderSkeleton.AnimationState.SetAnimation(0, "Hang", true);
+                    swingingState = swingingAnimationState.hang;
+            }
         }
     }
 

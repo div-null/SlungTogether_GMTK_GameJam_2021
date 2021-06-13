@@ -1,0 +1,62 @@
+
+skeleton.png
+size: 349,1013
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+spider_0000s_0000s_0002_rt
+  rotate: false
+  xy: 220, 304
+  size: 112, 106
+  orig: 119, 106
+  offset: 0, 0
+  index: -1
+spider_0000s_0001s_0000_head
+  rotate: false
+  xy: 2, 501
+  size: 216, 127
+  orig: 219, 127
+  offset: 3, 0
+  index: -1
+spider_0000s_0001s_0000_head2
+  rotate: true
+  xy: 220, 412
+  size: 216, 127
+  orig: 219, 127
+  offset: 3, 0
+  index: -1
+spider_0000s_0001s_0000_head3
+  rotate: false
+  xy: 2, 372
+  size: 216, 127
+  orig: 219, 127
+  offset: 3, 0
+  index: -1
+spider_0000s_0002s_0000_lightsup
+  rotate: false
+  xy: 2, 630
+  size: 344, 381
+  orig: 344, 381
+  offset: 0, 0
+  index: -1
+spider_0000s_0002s_0001_body
+  rotate: false
+  xy: 2, 201
+  size: 197, 169
+  orig: 197, 169
+  offset: 0, 0
+  index: -1
+spider_0000s_0002s_0001_body2
+  rotate: true
+  xy: 2, 2
+  size: 197, 169
+  orig: 197, 169
+  offset: 0, 0
+  index: -1
+spider_0000s_0002s_0001_body3
+  rotate: true
+  xy: 173, 2
+  size: 197, 169
+  orig: 197, 169
+  offset: 0, 0
+  index: -1
