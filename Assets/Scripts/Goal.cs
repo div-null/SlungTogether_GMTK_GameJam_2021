@@ -18,7 +18,7 @@ public class Goal : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "SwingingBall")
+        if (col.tag == "SwingingBall" || col.tag == "FreezedBall")
         {
             //Win level screen
             //Load next level

@@ -6,7 +6,7 @@ public class BallsManager : MonoBehaviour
 {
     bool isAttached = false;
     bool loose = false;
-    bool canClamp = false;
+    bool canClamp = false;    
 
     Rigidbody2D swingingBall;
     Rigidbody2D freezedBall;
@@ -15,6 +15,8 @@ public class BallsManager : MonoBehaviour
 
     public Rigidbody2D ball1;
     public Rigidbody2D ball2;
+    //Rigidbody2D[] balls;
+    //int swinger; //should only ever be 0 or 1
 
     public float maxVelocity;
     public float maxForce;
@@ -40,9 +42,18 @@ public class BallsManager : MonoBehaviour
         if (loose)
         {
             loose = false;
-
+            //TODO
         }
-        else
+        swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
+        swingingJoint.enabled = true;
+
+        freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
+        freezedJoint.enabled = false;
+
+        freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
+
+        isAttached = true;
+        /*else
         {
             swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
             swingingJoint.enabled = true;
@@ -54,8 +65,8 @@ public class BallsManager : MonoBehaviour
 
             isAttached = true;
             
-        }
-        
+        }*/
+
     }
 
     void StopAttachment()
@@ -90,6 +101,12 @@ public class BallsManager : MonoBehaviour
     public void CanClamp(bool _canClamp)
     {
         canClamp = _canClamp;
+    }
+
+    public void CanClamp(bool _canClamp, int index)
+    {
+        CanClamp(_canClamp);
+        
     }
 
     public Vector3 GetBallsCenter()
