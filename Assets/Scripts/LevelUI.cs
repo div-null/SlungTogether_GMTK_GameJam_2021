@@ -1,15 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CameraMovement : MonoBehaviour
+public class LevelUI : MonoBehaviour
 {
-    BallsManager ballsManager;
+    GameObject GameOverPanel;
+    Button Retry;
+    Button BackToMainMenu_GameOver;
+
+    GameObject WinPanel;
 
     // Start is called before the first frame update
     void Start()
     {
-        ballsManager = FindObjectOfType<BallsManager>();
+        
     }
 
     // Update is called once per frame
