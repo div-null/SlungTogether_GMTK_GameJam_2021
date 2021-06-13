@@ -21,6 +21,7 @@ public class BallsManager : MonoBehaviour
     public float force;
     public float minDistance;
     public float maxDistance;
+    public float changingDistanceSpeed;
 
     private float currentVelocity;
     private float currentForce;
@@ -154,7 +155,7 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
      */
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -169,14 +170,34 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
                 else
                 {
                     StopAttachment();
-                    StartAttachment();
                 }
             }
+
+            //if they are falling down because they detach and freezeBall can attach then StartAttachment
+            if (isAttached == false && canClamp == true)
+            {
+                StartAttachment();
+            }
+            // if they attached
             else
             {
-                DetachCompletely();
+                // if swingingball can attach they attach
+                if (canClamp == true)
+                {
+                    StopAttachment();
+                    StartAttachment();
+                }
+                // else they cant attach and they just StopAttachment
+                else
+                {
+                    StopAttachment();
+                }
             }
-            
+
+            //else
+            //{
+            //    DetachCompletely();
+            //}
         }
 
         Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
@@ -193,12 +214,8 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
                 if (swingingBall.velocity.magnitude > currentVelocity)
                     swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
-            else
-            {
-
-            }
             
-            swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
+            swingingJoint.distance -= Input.GetAxis("Vertical") / 100 * changingDistanceSpeed;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
         }
