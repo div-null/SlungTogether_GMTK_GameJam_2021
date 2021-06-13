@@ -30,11 +30,6 @@ public class LevelUI : MonoBehaviour
     public void GoToNextLevel()
     {
         LevelManager.currentLevel++;
-        SceneManager.LoadScene($"Ivan");
-    }
-
-    public void Retry()
-    {
         SceneManager.LoadScene($"Level{LevelManager.currentLevel}");
     }
 

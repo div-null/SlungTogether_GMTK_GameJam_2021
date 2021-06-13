@@ -8,7 +8,7 @@ public class BallsManager : MonoBehaviour
 {
     public enum swingingAnimationState
     {
-        hang = 0,
+        Hang = 0,
         ReachLeft,
         ReachRight
     }
@@ -98,6 +98,9 @@ public class BallsManager : MonoBehaviour
     {
         freezedBall.constraints = RigidbodyConstraints2D.None;
         SwapOpportunities();
+
+        freezeSpiderSkeleton.AnimationState.SetAnimation(0, "Fall", true);
+        swingingSpiderSkeleton.AnimationState.SetAnimation(0, "Fall", true);
 
         isAttached = false;
         loose = false;
@@ -224,10 +227,10 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
                     StartAttachment();
                 }
                 // else they cant attach and they just StopAttachment
-                else
-                {
-                    StopAttachment();
-                }
+                //else
+                //{
+                //    StopAttachment();
+                //}
             }
 
             //else
@@ -302,7 +305,7 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
             else
             {
                     swingingSpiderSkeleton.AnimationState.SetAnimation(0, "Hang", true);
-                    swingingState = swingingAnimationState.hang;
+                    swingingState = swingingAnimationState.Hang;
             }
         }
     }

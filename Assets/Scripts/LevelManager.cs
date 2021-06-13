@@ -21,7 +21,7 @@ public class LevelManager
     {
         state = -1;
         SceneManager.LoadScene("LevelUI");
-        //Scene scene = SceneManager.GetActiveScene();
-        //SceneManager.LoadScene(scene.name);
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 }
