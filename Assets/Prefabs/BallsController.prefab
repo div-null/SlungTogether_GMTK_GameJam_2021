@@ -208,11 +208,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ball1: {fileID: 1750671515831058715}
   ball2: {fileID: 1750671514366665063}
-  maxVelocity: 120
-  maxForce: 60
+  maxVelocity: 100
+  maxForce: 20
   force: 60
-  minDistance: 0.1
+  minDistance: 0.3
   maxDistance: 10
+  changingDistanceSpeed: 1
 --- !u!1 &1750671515831058714
 GameObject:
   m_ObjectHideFlags: 0

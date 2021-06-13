@@ -20,9 +20,7 @@ public class Goal : MonoBehaviour
     {
         if (col.tag == "SwingingBall" || col.tag == "FreezedBall")
         {
-            //Win level screen
-            //Load next level
-            print("Level completed!");
+            LevelManager.Win();
         }
     }
 }

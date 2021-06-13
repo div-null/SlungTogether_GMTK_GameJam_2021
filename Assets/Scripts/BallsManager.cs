@@ -23,6 +23,7 @@ public class BallsManager : MonoBehaviour
     public float force;
     public float minDistance;
     public float maxDistance;
+    public float changingDistanceSpeed;
 
     private float currentVelocity;
     private float currentForce;
@@ -114,8 +115,64 @@ public class BallsManager : MonoBehaviour
         return freezedBall.position;
     }
 
+    /*
+     // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (isAttached == false && canClamp)
+                StartAttachment();
+            else if (isAttached == true && canClamp)
+            {
+                StopAttachment();
+                StartAttachment();
+            }
+        }
+
+        /*Vector2 frozen = freezedBall.transform.position;
+        Vector2 swinging = swingingBall.transform.position;
+
+        //Frozen angle
+        frozen.x = frozen.x - swinging.x;
+        frozen.y = frozen.y - swinging.y;
+        float frozenAngle = Mathf.Atan2(frozen.y, frozen.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, frozenAngle));
+
+        //Swinging angle
+        swinging.x = swinging.x - frozen.x;
+        swinging.y = swinging.y - frozen.y;
+        float swingingAngle = Mathf.Atan2(swinging.y, swinging.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, swingingAngle));*/
+        /*
+    Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
+
+        if (isAttached == true)
+        {
+            if ((swingingJoint.connectedAnchor - (Vector2) swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
+            {
+                //swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * force, 0), ForceMode2D.Force);
+                swingingBall.AddForce(forceDirection* (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+                if (swingingBall.velocity.magnitude > currentVelocity)
+                    swingingBall.velocity = swingingBall.velocity.normalized* currentVelocity;
+}
+
+swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
+            swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
+            swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
+
+            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            
+
+            //Debug.Log(swingingJoint.distance);
+            Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity);
+        }
+    }
+     */
+
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -130,14 +187,34 @@ public class BallsManager : MonoBehaviour
                 else
                 {
                     StopAttachment();
-                    StartAttachment();
                 }
             }
+
+            //if they are falling down because they detach and freezeBall can attach then StartAttachment
+            if (isAttached == false && canClamp == true)
+            {
+                StartAttachment();
+            }
+            // if they attached
             else
             {
-                DetachCompletely();
+                // if swingingball can attach they attach
+                if (canClamp == true)
+                {
+                    StopAttachment();
+                    StartAttachment();
+                }
+                // else they cant attach and they just StopAttachment
+                else
+                {
+                    StopAttachment();
+                }
             }
-            
+
+            //else
+            //{
+            //    DetachCompletely();
+            //}
         }
 
         Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
@@ -154,12 +231,8 @@ public class BallsManager : MonoBehaviour
                 if (swingingBall.velocity.magnitude > currentVelocity)
                     swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
             }
-            else
-            {
-
-            }
             
-            swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
+            swingingJoint.distance -= Input.GetAxis("Vertical") / 100 * changingDistanceSpeed;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
         }
