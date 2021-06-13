@@ -11,16 +11,10 @@ public class MainMenuUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < LevelsButtons.Length; i++)
-        {
-            if (LevelManager.isLevelOpened[i] == false)
-                LevelsButtons[i].interactable = false;
-            else
-                LevelsButtons[i].interactable = true;
-        }
+
     }
 
-    public void StartLevel1()
+    public void StartGame()
     {
         LevelManager.currentLevel = 1;
         SceneManager.LoadScene("Level1");
