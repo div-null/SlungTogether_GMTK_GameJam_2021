@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallsManager: MonoBehaviour
+public class BallsManager : MonoBehaviour
 {
     bool isAttached = false;
+    bool loose = false;
     bool canClamp = false;
 
     Rigidbody2D swingingBall;
@@ -17,6 +18,7 @@ public class BallsManager: MonoBehaviour
 
     public float maxVelocity;
     public float maxForce;
+    public float force;
     public float minDistance;
     public float maxDistance;
 
@@ -33,36 +35,56 @@ public class BallsManager: MonoBehaviour
         StartAttachment();
     }
 
-    void StartAttachment()
+    public void StartAttachment()
     {
-        swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
-        swingingJoint.enabled = true;
+        if (loose)
+        {
+            loose = false;
 
-        freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
-        freezedJoint.enabled = false;
+        }
+        else
+        {
+            swingingJoint = swingingBall.GetComponent<SpringJoint2D>();
+            swingingJoint.enabled = true;
 
-        freezedBall.constraints = RigidbodyConstraints2D.FreezeAll;
+            freezedJoint = freezedBall.GetComponent<SpringJoint2D>();
+            freezedJoint.enabled = false;
 
-        isAttached = true;
+            freezedBall.constraints = RigidbodyConstraints2D.FreezePosition;
+
+            isAttached = true;
+            
+        }
+        
     }
 
     void StopAttachment()
     {
         freezedBall.constraints = RigidbodyConstraints2D.None;
-        freezedBall.constraints = RigidbodyConstraints2D.FreezeRotation;
         SwapOpportunities();
 
         isAttached = false;
+        loose = false;
     }
 
-    void SwapOpportunities()
+    //If the user presses Space when they are not ready to attach somewhere
+    void DetachCompletely()
+    {
+        print("flying free!!!!");
+        freezedBall.constraints = RigidbodyConstraints2D.None;
+        isAttached = false;
+        loose = true;
+
+    }
+
+    public void SwapOpportunities()
     {
         Rigidbody2D exchanger = freezedBall;
         freezedBall = swingingBall;
         freezedBall.tag = "FreezedBall";
         swingingBall = exchanger;
         swingingBall.tag = "SwingingBall";
-        swingingBall.AddForce((freezedBall.position - swingingBall.position).normalized * 20);
+        swingingBall.AddForce((freezedBall.position - swingingBall.position).normalized * 20); //not sure this line is necessary
     }
 
     public void CanClamp(bool _canClamp)
@@ -132,45 +154,58 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
      */
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (isAttached == false && canClamp)
-                StartAttachment();
-            else if (isAttached == true && canClamp)
+            if (loose)
             {
-                StopAttachment();
-                StartAttachment();
+                SwapOpportunities();
             }
+            if (canClamp)
+            {
+                if (isAttached == false)
+                    StartAttachment();
+                else
+                {
+                    StopAttachment();
+                    StartAttachment();
+                }
+            }
+            else
+            {
+                DetachCompletely();
+            }
+            
         }
+
+        Vector2 forceDirection = -Vector2.Perpendicular(freezedBall.transform.position - swingingBall.transform.position);
 
         if (isAttached == true)
         {
-            if ((swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude > swingingJoint.distance - 0.4f)
+            float dist = (swingingJoint.connectedAnchor - (Vector2)swingingJoint.transform.position).magnitude;
+            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
+            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
+            if (dist > swingingJoint.distance - 0.4f) //why is this here?
             {
-                swingingBall.AddForce(new Vector2(Input.GetAxis("Horizontal") * currentForce, 0), ForceMode2D.Force);
+                //swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * force), ForceMode2D.Force);
+                swingingBall.AddForce(forceDirection * (Input.GetAxis("Horizontal") * currentForce), ForceMode2D.Force);
                 if (swingingBall.velocity.magnitude > currentVelocity)
                     swingingBall.velocity = swingingBall.velocity.normalized * currentVelocity;
+            }
+            else
+            {
+
             }
             
             swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
-
-            currentVelocity = maxVelocity / (maxDistance - swingingJoint.distance + 1);
-            currentForce = maxForce / (maxDistance - swingingJoint.distance + 1);
-            //Debug.Log(swingingJoint.distance);
-            Debug.Log("vel: " + swingingBall.velocity.magnitude + " max vel: " + currentVelocity + " cur force: " + currentForce);
         }
     }
 
-    /*private void OnTriggerStay2D(Collider2D collision)
+    public bool IsLoose()
     {
-        if (collision.tag == "")
-        {
-            //ToggleCanClamp(true);
-            //gameObject.GetComponent<SpriteRenderer>().color = Color.green;
-        }
-    }*/
+        return loose;
+    }
 }
