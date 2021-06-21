@@ -20,7 +20,7 @@ public class MusicPlayer : MonoBehaviour
 
     public void SetMusic(int song)
     {
-        AudioClip currentClip = song < 1 ? forestMusic : treeMusic;
+        AudioClip currentClip = song < 4 ? forestMusic : treeMusic;
         if (_audioSource.clip != currentClip)
         {
             _audioSource.Stop();
