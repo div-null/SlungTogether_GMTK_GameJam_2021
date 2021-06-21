@@ -278,6 +278,28 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
             swingingJoint.distance -= Input.GetAxis("Vertical") / 100 * changingDistanceSpeed;
             swingingJoint.distance = Mathf.Max(swingingJoint.distance, minDistance);
             swingingJoint.distance = Mathf.Min(swingingJoint.distance, maxDistance);
+
+            //Animations
+            if (Input.GetAxis("Vertical") == 0)
+            {
+                //if (rotation > 0 && swingingState != swingingAnimationState.ReachRight)
+                if (Input.GetKeyDown(KeyCode.D) && swingingState != swingingAnimationState.ReachRight)
+                {
+                    swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachRight", true);
+                    swingingState = swingingAnimationState.ReachRight;
+                }
+                else if (Input.GetKeyDown(KeyCode.A) && swingingState != swingingAnimationState.ReachLeft)
+                {
+                    swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachLeft", true);
+                    swingingState = swingingAnimationState.ReachLeft;
+                }
+
+                if ((Input.GetKeyUp(KeyCode.D) && swingingState == swingingAnimationState.ReachRight) || (Input.GetKeyUp(KeyCode.A) && swingingState == swingingAnimationState.ReachLeft))
+                {
+                    swingingSpiderSkeleton.AnimationState.SetAnimation(0, "Hang", true);
+                    swingingState = swingingAnimationState.Hang;
+                }
+            }
         }
     }
 
@@ -288,47 +310,33 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
         previousSpringDirection = currentSpringDirection;
 
         //Animations
-        if (Input.GetAxis("Vertical") < 0 && scribbleState != scribbleAnimationState.down)
+        if (Input.GetAxis("Vertical") < 0)
         {
-            swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbDown", true);
-            scribbleState = scribbleAnimationState.down;
+            if (scribbleState != scribbleAnimationState.down)
+            {
+                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbDown", true);
+                scribbleState = scribbleAnimationState.down;
+            }
+
             if (webUpSound.isPlaying)
                 webUpSound.Stop();
-            /*if (webDownSound.isPlaying)
-            {
+
+            if (!webDownSound.isPlaying)
                 webDownSound.PlayOneShot(webDownSound.clip);
-            }*/
-            webDownSound.PlayOneShot(webDownSound.clip);
         }
-        else if (Input.GetAxis("Vertical") > 0 && scribbleState != scribbleAnimationState.up)
+        else if (Input.GetAxis("Vertical") > 0)
         {
-            swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbUp", true);
-            scribbleState = scribbleAnimationState.up;
+            if (scribbleState != scribbleAnimationState.up)
+            {
+                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbUp", true);
+                scribbleState = scribbleAnimationState.up;
+            }
+
             if (webDownSound.isPlaying)
                 webDownSound.Stop();
-            /*if (webUpSound.isPlaying)
-            {
+
+            if (!webUpSound.isPlaying)
                 webUpSound.PlayOneShot(webUpSound.clip);
-            }*/
-            webUpSound.PlayOneShot(webUpSound.clip);
-        }
-        else if (Input.GetAxis("Vertical") == 0)
-        {
-            if (rotation > 0 && swingingState != swingingAnimationState.ReachRight)
-            {
-                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachRight", true);
-                swingingState = swingingAnimationState.ReachRight;
-            }
-            else if (rotation < 0 && swingingState != swingingAnimationState.ReachLeft)
-            {
-                swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ReachLeft", true);
-                swingingState = swingingAnimationState.ReachLeft;
-            }
-            else
-            {
-                    swingingSpiderSkeleton.AnimationState.SetAnimation(0, "Hang", true);
-                    swingingState = swingingAnimationState.Hang;
-            }
         }
     }
 
