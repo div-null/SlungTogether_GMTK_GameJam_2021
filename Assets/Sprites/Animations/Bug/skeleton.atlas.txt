@@ -1,0 +1,76 @@
+
+skeleton.png
+size: 467,978
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bug-(1)_0000s_0000_abdomen_light
+  rotate: false
+  xy: 2, 573
+  size: 404, 403
+  orig: 404, 403
+  offset: 0, 0
+  index: -1
+bug_0000s_0000_tendril2
+  rotate: true
+  xy: 408, 854
+  size: 122, 56
+  orig: 122, 56
+  offset: 0, 0
+  index: -1
+bug_0000s_0001_tendril
+  rotate: false
+  xy: 408, 727
+  size: 36, 125
+  orig: 36, 125
+  offset: 0, 0
+  index: -1
+bug_0000s_0002_leg
+  rotate: true
+  xy: 215, 6
+  size: 167, 82
+  orig: 167, 82
+  offset: 0, 0
+  index: -1
+bug_0000s_0003_head
+  rotate: false
+  xy: 299, 35
+  size: 150, 138
+  orig: 150, 138
+  offset: 0, 0
+  index: -1
+bug_0000s_0004_wing_1
+  rotate: false
+  xy: 2, 208
+  size: 226, 178
+  orig: 226, 178
+  offset: 0, 0
+  index: -1
+bug_0000s_0005_wing_1-копия
+  rotate: false
+  xy: 230, 175
+  size: 219, 116
+  orig: 219, 116
+  offset: 0, 0
+  index: -1
+bug_0000s_0006_wing_2
+  rotate: false
+  xy: 2, 2
+  size: 211, 204
+  orig: 211, 204
+  offset: 0, 0
+  index: -1
+bug_0000s_0007_abdomen2
+  rotate: false
+  xy: 282, 293
+  size: 183, 278
+  orig: 183, 278
+  offset: 0, 0
+  index: -1
+bug_0000s_0008_abdomen
+  rotate: true
+  xy: 2, 388
+  size: 183, 278
+  orig: 183, 278
+  offset: 0, 0
+  index: -1
