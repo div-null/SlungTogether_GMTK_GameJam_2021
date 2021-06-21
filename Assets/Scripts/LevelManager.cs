@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager
 {
-    static int numberOfLevels = 7;
-    public static bool[] isLevelOpened = { true, false, false, false, false, false, false };
+    static int numberOfLevels = 8;
+    public static bool[] isLevelOpened = { true, false, false, false, false, false, false, false };
     public static int currentLevel = 1;
     public static int state = 0;
 
@@ -14,7 +14,13 @@ public class LevelManager
     {
         isLevelOpened[currentLevel] = true;
         state = 1;
+        
         SceneManager.LoadScene("LevelUI");
+    }
+
+    public static void FinalScreen()
+    {
+        SceneManager.LoadScene("WinScreen");
     }
 
     public static void GameOver()

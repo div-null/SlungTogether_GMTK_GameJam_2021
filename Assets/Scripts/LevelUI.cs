@@ -30,6 +30,7 @@ public class LevelUI : MonoBehaviour
     public void GoToNextLevel()
     {
         LevelManager.currentLevel++;
+        GameObject.FindGameObjectWithTag("Music").GetComponent<MusicPlayer>().SetMusic(LevelManager.currentLevel);
         SceneManager.LoadScene($"Level{LevelManager.currentLevel}");
     }
 

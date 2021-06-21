@@ -32,6 +32,13 @@ public class BallsManager : MonoBehaviour
     public Rigidbody2D ball1;
     public Rigidbody2D ball2;
 
+    [SerializeField]
+    AudioSource grabSound;
+    [SerializeField]
+    AudioSource webUpSound;
+    [SerializeField]
+    AudioSource webDownSound;
+
     public float maxVelocity;
     public float maxForce;
     public float force;
@@ -82,6 +89,7 @@ public class BallsManager : MonoBehaviour
 
             isAttached = true;
 
+            grabSound.Play();
 
             //Animations
             freezeSpiderSkeleton = freezedBall.GetComponentInChildren<SkeletonAnimation>();
@@ -284,11 +292,25 @@ swingingJoint.distance -= Input.GetAxis("Vertical") / 40;
         {
             swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbDown", true);
             scribbleState = scribbleAnimationState.down;
+            if (webUpSound.isPlaying)
+                webUpSound.Stop();
+            /*if (webDownSound.isPlaying)
+            {
+                webDownSound.PlayOneShot(webDownSound.clip);
+            }*/
+            webDownSound.PlayOneShot(webDownSound.clip);
         }
         else if (Input.GetAxis("Vertical") > 0 && scribbleState != scribbleAnimationState.up)
         {
             swingingSpiderSkeleton.AnimationState.SetAnimation(0, "ClimbUp", true);
             scribbleState = scribbleAnimationState.up;
+            if (webDownSound.isPlaying)
+                webDownSound.Stop();
+            /*if (webUpSound.isPlaying)
+            {
+                webUpSound.PlayOneShot(webUpSound.clip);
+            }*/
+            webUpSound.PlayOneShot(webUpSound.clip);
         }
         else if (Input.GetAxis("Vertical") == 0)
         {
