@@ -24,21 +24,21 @@ public class Goal : MonoBehaviour
         if (col.tag == "SwingingBall")
         {
             //LevelManager.Win();
-            StartCoroutine(WinSequence());
+            StartCoroutine(CompleteLevelSequence());
         }
     }
 
-    private IEnumerator WinSequence()
+    private IEnumerator CompleteLevelSequence()
     {
         Time.timeScale = 0;
         winSound.PlayOneShot(winSound.clip);
         yield return new WaitForSecondsRealtime(winSound.clip.length - 1.6f);
         Time.timeScale = 1;
-        if (LevelManager.currentLevel == 7)
+        if (LevelManager.currentLevel == 6)
         {
             LevelManager.FinalScreen();
         }
         else
-            LevelManager.Win();
+            LevelManager.CompleteLevel();
     }
 }

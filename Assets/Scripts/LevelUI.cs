@@ -6,21 +6,7 @@ using UnityEngine.UI;
 
 public class LevelUI : MonoBehaviour
 {
-    public GameObject LosePanel;
-
     public GameObject WinPanel;
-
-    public void ShowWinPanel()
-    {
-        WinPanel.SetActive(true);
-        LosePanel.SetActive(false);
-    }
-
-    public void ShowLosePanel()
-    {
-        WinPanel.SetActive(false);
-        LosePanel.SetActive(true);
-    }
 
     public void GoToMainMenu()
     {
@@ -37,10 +23,7 @@ public class LevelUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (LevelManager.state == 1)
-            ShowWinPanel();
-        else if (LevelManager.state == -1)
-            ShowLosePanel();
+
     }
 
     // Update is called once per frame

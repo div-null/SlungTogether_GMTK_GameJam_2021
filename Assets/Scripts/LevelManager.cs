@@ -10,24 +10,22 @@ public class LevelManager
     public static int currentLevel = 1;
     public static int state = 0;
 
-    public static void Win()
+    public static void ReloadScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
+    }
+
+    public static void CompleteLevel()
     {
         isLevelOpened[currentLevel] = true;
         state = 1;
         
-        SceneManager.LoadScene("LevelUI");
+        SceneManager.LoadScene("CompletedLevel");
     }
 
     public static void FinalScreen()
     {
-        SceneManager.LoadScene("WinScreen");
-    }
-
-    public static void GameOver()
-    {
-        state = -1;
-        SceneManager.LoadScene("LevelUI");
-        Scene scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
+        SceneManager.LoadScene("FinalScreen");
     }
 }

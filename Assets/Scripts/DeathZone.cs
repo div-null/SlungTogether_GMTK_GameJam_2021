@@ -10,7 +10,6 @@ public class DeathZone : MonoBehaviour
     {
         if (collision.gameObject.tag == "FreezedBall" || collision.gameObject.tag == "SwingingBall")
         {
-            //LevelManager.GameOver();
             StartCoroutine(LoseSequence());
         }
     }
@@ -33,6 +32,6 @@ public class DeathZone : MonoBehaviour
         loseSound.PlayOneShot(loseSound.clip);
         yield return new WaitForSecondsRealtime(loseSound.clip.length - 1.5f);
         Time.timeScale = 1;
-        LevelManager.GameOver();
+        LevelManager.ReloadScene();
     }
 }
